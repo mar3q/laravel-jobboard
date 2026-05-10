@@ -74,11 +74,8 @@
         </div>
     </div>
 
-    @push('head')
-        <meta property="og:title" content="{{ $job->title }} — {{ $job->company->name }}">
-        <meta property="og:description" content="{{ Str::limit(strip_tags($job->description), 180) }}">
-        <script type="application/ld+json">
-        @json([
+    @php
+        $jsonLd = [
             '@context' => 'https://schema.org/',
             '@type' => 'JobPosting',
             'title' => $job->title,
@@ -95,7 +92,12 @@
                     'addressCountry' => $job->location_country,
                 ],
             ],
-        ])
-        </script>
+        ];
+    @endphp
+
+    @push('head')
+        <meta property="og:title" content="{{ $job->title }} — {{ $job->company->name }}">
+        <meta property="og:description" content="{{ Str::limit(strip_tags($job->description), 180) }}">
+        <script type="application/ld+json">{!! json_encode($jsonLd, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>
     @endpush
 </x-app-layout>
